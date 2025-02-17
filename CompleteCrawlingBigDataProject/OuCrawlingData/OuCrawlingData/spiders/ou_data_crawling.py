@@ -1,21 +1,20 @@
 import scrapy
 from urllib.parse import urlparse, urlunparse
-
+import re
 class OuDataCrawlingSpider(scrapy.Spider):
     name = "ou_data_crawling"
     allowed_domains = ["ou.edu.vn"]
     start_urls = ["https://ou.edu.vn/"]
 
-    custom_settings = {
-        'FEEDS':{
-            'ou_data.json' : {'format' : 'json'}
-        }
-    }
-
 
     def clean_url(self, url):
         parsed_url = urlparse(url)
         return urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, '', '', ''))
+
+    def clean_text(self, text):
+        text = re.sub(r'\s+', ' ', text)
+        text = re.sub(r'\s+([,.!?;])', r'\1', text)
+        return text.strip()
 
     def parse(self, response):
         content_type = response.headers.get(b'Content-Type', b'').decode(errors='ignore').lower()
@@ -33,8 +32,7 @@ class OuDataCrawlingSpider(scrapy.Spider):
                 continue
 
             url = self.clean_url(response.urljoin(link))
-            title = ' '.join(a_tag.css('*::text').getall()).strip()
-
+            title = self.clean_text(' '.join(a_tag.css('*::text').getall()))
             if depth > 0:
                 content_paragraphs = response.css('div.content p::text').getall()
                 content_title = response.css('div.content h3.title::text').getall()
@@ -42,7 +40,11 @@ class OuDataCrawlingSpider(scrapy.Spider):
                 content_title = ' '.join(p.strip() for p in content_title if p.strip())
                 content = content_title + " " + content_data
             else:
-                content = ''
+                content = title
+
+            if not content.strip():
+                content = title
+            content = self.clean_text(content)
             yield {
                 'url': url,
                 'title': title,
