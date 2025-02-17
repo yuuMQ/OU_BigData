@@ -13,12 +13,6 @@ BOT_NAME = "OuCrawlingData"
 SPIDER_MODULES = ["OuCrawlingData.spiders"]
 NEWSPIDER_MODULE = "OuCrawlingData.spiders"
 
-FEEDS = {
-    'ou_data.json' : {'format' : 'json'}
-}
-
-
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "OuCrawlingData (+http://www.yourdomain.com)"
 
