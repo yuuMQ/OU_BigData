@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ou Tool Search</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+
+        #search-form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 80%;
+            max-width: 500px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            margin-top: 30px;
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .result-item h3 {
+            font-size: 22px;
+            margin: 0;
+            color: #333;
+        }
+
+        .result-item p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .result-item:hover {
+            background-color: #f4f4f4;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .result-item a {
+            text-decoration: none;
+            color: #4CAF50;
+            transition: color 0.3s;
+        }
+
+        .result-item a:hover {
+            color: #45a049;
+        }
+
+        .no-results {
+            font-size: 18px;
+            color: #ff0000;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .results {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Chào mừng đến với Ou Tool</h1>
+
+        <form id="search-form" action="/search" method="get">
+            <input type="text" name="query" id="query" placeholder="Nhập từ khóa tìm kiếm..." required>
+            <button type="submit">Tìm kiếm</button>
+        </form>
+
+        <div id="results-container">
+            {% if results %}
+                <div class="results">
+                    <h2>Kết quả tìm kiếm:</h2>
+                    {% for result in results %}
+                        <div class="result-item">
+                            <h3><a href="{{ result.url }}" target="_blank">{{ result.title }}</a></h3>
+                            <p>{{ result.content }}</p>
+                            <p><strong>Điểm số:</strong> {{ result.score }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-results">Không có kết quả phù hợp với từ khóa của bạn.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('query').focus();
+
+        document.getElementById('search-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let query = document.getElementById('query').value;
+            let url = '/search?query=' + encodeURIComponent(query);
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('results-container').innerHTML = data;
+                })
+                .catch(error => console.log('Error:', error));
+        });
+    </script>
+
+</body>
+</html>

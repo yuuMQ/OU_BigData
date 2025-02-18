@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="results">
+    <h2>Kết quả tìm kiếm:</h2>
+    {% for result in results %}
+        <div class="result-item">
+            <h3><a href="{{ result.url }}" target="_blank">{{ result.title }}</a></h3>
+            <p>{{ result.content }}</p>
+            <p><strong>Điểm số:</strong> {{ result.score }}</p>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>
